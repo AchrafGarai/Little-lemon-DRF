@@ -14,6 +14,7 @@ def index(request):
 def hello_world(request):
     return Response({'message': 'Hello, world!'})
 
+# Booking Edpoints
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_all_bookings(request):
@@ -29,6 +30,16 @@ def get_all_bookings(request):
         else:
             return Response({"message": "Invalid Format"} ,status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def booking_detail(request, id):
+    if request.method == 'GET':
+        booking = Booking.objects.get(id=id)
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data)
+
+
+# Menu Edpoints
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_all_menus(request):
@@ -43,3 +54,11 @@ def get_all_menus(request):
             return Response(serializer.data , status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid Format"} ,status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def menu_detail(request, id):
+    if request.method == 'GET':
+        menu = Menu.objects.get(id=id)
+        serializer = MenuSerializer(menu)
+        return Response(serializer.data)

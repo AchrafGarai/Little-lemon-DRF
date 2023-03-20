@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -33,10 +34,13 @@ def get_all_bookings(request):
 @api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def booking_detail(request, id):
+    booking = Booking.objects.get(id=id)
     if request.method == 'GET':
-        booking = Booking.objects.get(id=id)
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
+    elif request.method =='DELETE':
+        booking.delete()
+        return Response({"message": "Booking Deleted"} ,status.HTTP_200_OK)
 
 
 # Menu Edpoints
@@ -58,7 +62,10 @@ def get_all_menus(request):
 @api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def menu_detail(request, id):
+    menu = Menu.objects.get(id=id)
     if request.method == 'GET':
-        menu = Menu.objects.get(id=id)
         serializer = MenuSerializer(menu)
         return Response(serializer.data)
+    elif request.method =='DELETE':
+        menu.delete()
+        return Response({"message": "Menu Item Deleted"} ,status.HTTP_200_OK)

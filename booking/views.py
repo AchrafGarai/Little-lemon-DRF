@@ -31,16 +31,19 @@ def get_all_bookings(request):
         else:
             return Response({"message": "Invalid Format"} ,status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'DELETE', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def booking_detail(request, id):
-    booking = Booking.objects.get(id=id)
-    if request.method == 'GET':
-        serializer = BookingSerializer(booking)
-        return Response(serializer.data)
-    elif request.method =='DELETE':
-        booking.delete()
-        return Response({"message": "Booking Deleted"} ,status.HTTP_200_OK)
+    try:
+        booking = Booking.objects.get(id=id)
+        if request.method == 'GET':
+            serializer = BookingSerializer(booking)
+            return Response(serializer.data)
+        elif request.method =='DELETE':
+            booking.delete()
+            return Response({"message": "Booking Deleted"} ,status.HTTP_200_OK)
+    except Booking.DoesNotExist:
+        return Response({"message": "Booking doesn't exist"} ,status.HTTP_404_NOT_FOUND)
 
 
 # Menu Edpoints
@@ -62,10 +65,13 @@ def get_all_menus(request):
 @api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def menu_detail(request, id):
-    menu = Menu.objects.get(id=id)
-    if request.method == 'GET':
-        serializer = MenuSerializer(menu)
-        return Response(serializer.data)
-    elif request.method =='DELETE':
-        menu.delete()
-        return Response({"message": "Menu Item Deleted"} ,status.HTTP_200_OK)
+    try:
+        menu = Menu.objects.get(id=id)
+        if request.method == 'GET':
+            serializer = MenuSerializer(menu)
+            return Response(serializer.data)
+        elif request.method =='DELETE':
+            menu.delete()
+            return Response({"message": "Menu Item Deleted"} ,status.HTTP_200_OK)
+    except Menu.DoesNotExist:
+            return Response({"message": "Menu Item doesn't exist"} ,status.HTTP_404_NOT_FOUND)

@@ -31,7 +31,7 @@ def get_all_bookings(request):
         else:
             return Response({"message": "Invalid Format"} ,status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET', 'DELETE', 'PATCH'])
+@api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def booking_detail(request, id):
     try:
@@ -42,6 +42,11 @@ def booking_detail(request, id):
         elif request.method =='DELETE':
             booking.delete()
             return Response({"message": "Booking Deleted"} ,status.HTTP_200_OK)
+        elif request.method =='PUT':
+            serializer = BookingSerializer(booking, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
     except Booking.DoesNotExist:
         return Response({"message": "Booking doesn't exist"} ,status.HTTP_404_NOT_FOUND)
 
@@ -62,7 +67,7 @@ def get_all_menus(request):
         else:
             return Response({"message": "Invalid Format"} ,status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def menu_detail(request, id):
     try:
@@ -73,5 +78,10 @@ def menu_detail(request, id):
         elif request.method =='DELETE':
             menu.delete()
             return Response({"message": "Menu Item Deleted"} ,status.HTTP_200_OK)
+        elif request.method =='PUT':
+            serializer = MenuSerializer(menu, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
     except Menu.DoesNotExist:
             return Response({"message": "Menu Item doesn't exist"} ,status.HTTP_404_NOT_FOUND)
